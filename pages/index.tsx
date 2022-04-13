@@ -3,12 +3,18 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import styles from '../styles/Home.module.css';
+import useStore from 'store';
 
 const Basic = styled.div`
   background: #eee;
 `;
 
 const Home: NextPage = () => {
+  const { theme, setTheme } = useStore((state) => state);
+
+  const onSetTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -19,10 +25,10 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <Basic>
-          <h1 className={styles.title}>
-            Welcome to <a href="https://nextjs.org">Next.js!</a>
-          </h1>
+          <h1 className={styles.title}>Current theme {theme}</h1>
         </Basic>
+
+        <button onClick={onSetTheme}>Set theme</button>
 
         <p className={styles.description}>
           Get started by editing <code className={styles.code}>pages/index.tsx</code>
