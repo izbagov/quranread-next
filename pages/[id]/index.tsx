@@ -2,12 +2,16 @@ import { useEffect } from 'react';
 import api from 'lib/api';
 import { GetServerSideProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
+import { Verse } from 'components/Verse';
+
+// types
 import { Pagination } from 'types/common';
 import { Verse as TVerse } from 'types/verse';
+
+// utils
 import { TRANSLATIONS } from 'constants/api';
 import { isValidChapterId } from 'utils/validator';
-import { Verse } from 'components/Verse';
-import { getFontFaceSource } from 'lib/fontface';
+import { getFontFaceSource, getPagesByVerses } from 'utils/fontface';
 
 type ChapterProps = {
   verses: TVerse[];
@@ -17,14 +21,15 @@ type ChapterProps = {
 const Chapter: React.FC<ChapterProps> = ({ verses }) => {
   console.log({ verses });
   useEffect(() => {
-    const pageNumber = 1;
-    const fontFaceName = `p${pageNumber}-v2`;
-    const fontFace = new FontFace(fontFaceName, getFontFaceSource(pageNumber));
-    document.fonts.add(fontFace);
-    fontFace.load().then(() => {
-      console.log('шрифт загружен');
+    getPagesByVerses(verses).forEach((pageNumber) => {
+      const fontFaceName = `p${pageNumber}-v2`;
+      const fontFace = new FontFace(fontFaceName, getFontFaceSource(pageNumber));
+      document.fonts.add(fontFace);
+      fontFace.load().then(() => {
+        console.log('шрифт загружен', fontFaceName);
+      });
     });
-  }, []);
+  }, [verses]);
   return (
     <div>
       {verses.map((verse) => (
@@ -54,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     word_fields: 'v2_page, code_v2',
   };
 
-  const result = await api.getChapter(1, reqParams);
+  const result = await api.getChapter(id, reqParams);
   const { verses, pagination } = result.data;
 
   return {

@@ -27,7 +27,7 @@ class QuranApi implements QuranApi {
     this.url = BASE_URL;
   }
 
-  getChapter(chapterId: number, options?: ChapterParams) {
+  getChapter(chapterId: string, options?: ChapterParams) {
     let params;
     if (options) {
       params = qs.stringify(options);
